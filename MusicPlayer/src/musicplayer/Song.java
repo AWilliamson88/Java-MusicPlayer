@@ -1,7 +1,5 @@
 package musicplayer;
 
-import java.util.LinkedList;
-
 /**
  * Java 3 AT 3 - Project Question 3 – Implement your solution - Must contain
  * dynamic data structures (e.g. doubly linked list or a binary tree) - Must
@@ -11,9 +9,9 @@ import java.util.LinkedList;
  *
  * @author Andrew Williamson / P113357
  */
-public class MusicController {
+public class Song {
 
-    private static LinkedList<Song> songList = new LinkedList<>();
- 
-
+    String id;
+    String title;
+    String filePath;
 }
