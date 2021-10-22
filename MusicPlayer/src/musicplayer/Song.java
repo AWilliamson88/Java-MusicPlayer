@@ -14,4 +14,12 @@ public class Song {
     String id;
     String title;
     String filePath;
+    
+    public Song(String source) {
+        filePath = source;
+    }
+    
+    public String getPath() {
+        return filePath;
+    }
 }
