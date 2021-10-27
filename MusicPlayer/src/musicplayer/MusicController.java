@@ -1,6 +1,7 @@
 package musicplayer;
 
 import java.util.LinkedList;
+import javafx.collections.ObservableList;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -23,6 +24,7 @@ public class MusicController {
 
     public void add(String source) {
         songList.add(new Song(source));
+        SortList();
     }
     
     public LinkedList<Song> songList() {
@@ -92,8 +94,26 @@ public class MusicController {
         }
     }
     
+    public void search(ObservableList<Song> songData) {
+        BinarySearch bs = new BinarySearch();
+        
+    }
+    
+    private void SortList() {
+        MergeSorter ms = new MergeSorter();
+        setSongList(ms.sort(getList()));
+    }
+    
     public Song getCurrentSong() {
         return currentSong;
+    }
+    
+    public LinkedList<Song> getList() {
+        return songList;
+    }
+    
+    private void setSongList(LinkedList<Song> newSongList) {
+        songList = newSongList;
     }
 
 }

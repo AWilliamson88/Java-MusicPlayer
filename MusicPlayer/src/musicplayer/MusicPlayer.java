@@ -1,6 +1,7 @@
 package musicplayer;
 
 import com.sun.javafx.embed.swing.FXDnD;
+import java.awt.Font;
 import java.awt.PageAttributes;
 import java.io.File;
 import java.util.HashSet;
@@ -12,12 +13,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
@@ -26,6 +29,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import static javafx.scene.text.Font.font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -55,10 +60,18 @@ public class MusicPlayer extends Application {
 
         Group root = new Group();
 
-        Label title = new Label("Awesome Music Player");
+        Text searchLbl = new Text("Search: ");
+        searchLbl.setStyle("-fx-font: 20 arial;");
+        
+        TextField searchField = new TextField();
+        searchField.setOnAction(e -> mc.search(songData));
+        
+        HBox searchHBox = new HBox();
+        searchHBox.getChildren().addAll(searchLbl, searchField);
+        searchHBox.setAlignment(Pos.BASELINE_LEFT);
+        searchHBox.setPadding(new Insets(10, 10, 10, 10));
 
         TableColumn<Song, String> titleColumn = new TableColumn("Song Title");
-//        titleColumn.setMinWidth(infinite);
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
         tableView.setPlaceholder(new Label("No songs to display"));
@@ -84,7 +97,7 @@ public class MusicPlayer extends Application {
 
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(10, 20, 0, 10));
-        vBox.getChildren().addAll(title, tableView, buttonDisplay);
+        vBox.getChildren().addAll(searchHBox, tableView, buttonDisplay);
 
         // Button Events
         btnAdd.setOnAction(e -> addSong(stage));
@@ -144,7 +157,7 @@ public class MusicPlayer extends Application {
         for (Song s : mc.songList) {
             songData.add(s);
         }
-
+        System.out.println(tableView.getItems().size());
     }
 
     private void highlightSong() {
