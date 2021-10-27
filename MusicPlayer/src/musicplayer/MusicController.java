@@ -15,13 +15,18 @@ import javafx.scene.media.MediaPlayer;
  */
 public class MusicController {
 
-    private static LinkedList<Song> songList = new LinkedList<>();
+    public static LinkedList<Song> songList = new LinkedList<>();
+    
     private Song currentSong;
     private Media media;
     private MediaPlayer mediaPlayer;
 
     public void add(String source) {
         songList.add(new Song(source));
+    }
+    
+    public LinkedList<Song> songList() {
+        return songList;
     }
 
     public void play() {
@@ -49,7 +54,6 @@ public class MusicController {
     public void stop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            currentSong = null;
         }
     }
 
@@ -86,6 +90,10 @@ public class MusicController {
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.play();
         }
+    }
+    
+    public Song getCurrentSong() {
+        return currentSong;
     }
 
 }
