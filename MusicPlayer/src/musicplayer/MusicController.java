@@ -17,7 +17,7 @@ import javafx.scene.media.MediaPlayer;
 public class MusicController {
 
     public static LinkedList<Song> songList = new LinkedList<>();
-    
+
     private Song currentSong;
     private Media media;
     private MediaPlayer mediaPlayer;
@@ -26,7 +26,7 @@ public class MusicController {
         songList.add(new Song(source));
         SortList();
     }
-    
+
     public LinkedList<Song> songList() {
         return songList;
     }
@@ -93,25 +93,39 @@ public class MusicController {
             mediaPlayer.play();
         }
     }
-    
-    public void search(ObservableList<Song> songData) {
+
+    public void search(ObservableList<Song> songData, String songToFind) {
         BinarySearch bs = new BinarySearch();
+        int index = bs.search(songData, songToFind);
         
+        if (index >= 0) {
+            currentSong = songList.get(index);
+            media = new Media(currentSong.getPath());
+            mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.play();
+        }
+        
+        // If binary search returns -1 then -> partial search.
+        // implement partial matching
+        // implement comparable or whatever.
+        // check each match char by char
+        // any partial match goes on to a separate list
+        // partial matches are then displayed.
     }
-    
+
     private void SortList() {
         MergeSorter ms = new MergeSorter();
         setSongList(ms.sort(getList()));
     }
-    
+
     public Song getCurrentSong() {
         return currentSong;
     }
-    
+
     public LinkedList<Song> getList() {
         return songList;
     }
-    
+
     private void setSongList(LinkedList<Song> newSongList) {
         songList = newSongList;
     }

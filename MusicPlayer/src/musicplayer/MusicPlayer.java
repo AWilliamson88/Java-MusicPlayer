@@ -64,7 +64,11 @@ public class MusicPlayer extends Application {
         searchLbl.setStyle("-fx-font: 20 arial;");
         
         TextField searchField = new TextField();
-        searchField.setOnAction(e -> mc.search(songData));
+        searchField.setOnAction(e -> {
+            mc.search(songData, searchField.getText());
+            highlightSong();
+            searchField.clear();
+        });
         
         HBox searchHBox = new HBox();
         searchHBox.getChildren().addAll(searchLbl, searchField);
