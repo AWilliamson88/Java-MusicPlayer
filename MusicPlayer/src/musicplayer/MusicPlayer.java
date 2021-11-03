@@ -1,13 +1,19 @@
 package musicplayer;
 
+import com.opencsv.CSVWriter;
 import com.sun.javafx.embed.swing.FXDnD;
 import java.awt.Font;
 import java.awt.PageAttributes;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,6 +39,7 @@ import static javafx.scene.text.Font.font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 
 /**
  * Java 3 AT 3 - Project Question 3 – Implement your solution - Must contain
@@ -60,24 +67,35 @@ public class MusicPlayer extends Application {
 
         Group root = new Group();
 
+        // Search
         Text searchLbl = new Text("Search: ");
         searchLbl.setStyle("-fx-font: 20 arial;");
-        
+
         TextField searchField = new TextField();
         searchField.setOnAction(e -> {
             mc.search(songData, searchField.getText());
             highlightSong();
             searchField.clear();
         });
-        
-        HBox searchHBox = new HBox();
-        searchHBox.getChildren().addAll(searchLbl, searchField);
-        searchHBox.setAlignment(Pos.BASELINE_LEFT);
-        searchHBox.setPadding(new Insets(10, 10, 10, 10));
 
+        // Add a Song
+        Button btnAdd = new Button("Add a Song");
+        btnAdd.setPadding(new Insets(5, 10, 5, 10));
+        HBox.setMargin(btnAdd, new Insets(0, 0, 0, 70));
+        // Add btn Event
+        btnAdd.setOnAction(e -> addSong(stage));
+
+        // Top Search and add btn HBox
+        HBox topHBox = new HBox();
+        topHBox.getChildren().addAll(searchLbl, searchField, btnAdd);
+        topHBox.setAlignment(Pos.BASELINE_LEFT);
+        topHBox.setPadding(new Insets(10, 10, 10, 10));
+
+        // Table column
         TableColumn<Song, String> titleColumn = new TableColumn("Song Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
+        // Table View
         tableView.setPlaceholder(new Label("No songs to display"));
         tableView.setItems(songData);
         tableView.getColumns().add(titleColumn);
@@ -89,54 +107,68 @@ public class MusicPlayer extends Application {
         VBox btnsLeft = new VBox();
         btnsLeft.getChildren().addAll(btnPlayPause, btnPrevious);
 
-        VBox btnsMid = new VBox();
+        // Right buttons VBox
+        VBox btnsRight = new VBox();
         Button btnStop = new Button("Stop");
         Button btnNext = new Button("Next");
-        btnsMid.getChildren().addAll(btnStop, btnNext);
+        btnsRight.getChildren().addAll(btnStop, btnNext);
 
-        Button btnAdd = new Button("Add a Song");
-
+        // Button display HBox
         HBox buttonDisplay = new HBox();
-        buttonDisplay.getChildren().addAll(btnsLeft, btnsMid, btnAdd);
+        buttonDisplay.getChildren().addAll(btnsLeft, btnsRight);
 
+        // Main UI display Vbox
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(10, 20, 0, 10));
-        vBox.getChildren().addAll(searchHBox, tableView, buttonDisplay);
+        vBox.getChildren().addAll(topHBox, tableView, buttonDisplay);
 
-        // Button Events
-        btnAdd.setOnAction(e -> addSong(stage));
+        // Music player button events
         btnPlayPause.setOnAction(e -> {
             mc.play();
             highlightSong();
         });
+
         btnStop.setOnAction(e -> {
             mc.stop();
             highlightSong();
         });
+
         btnNext.setOnAction(e -> {
             mc.next();
             highlightSong();
         });
+
         btnPrevious.setOnAction(e -> {
             mc.previous();
             highlightSong();
         });
 
-        // Test Media class.
-        // Create a media object and assign it the music file.
-        // Assign the media bject to the media player.
-//        MediaPlayer mediaPlayer = new MediaPlayer(media);
-//        mediaPlayer.setAutoPlay(true);
-        // Create the media view for the media player.
-//        MediaView mediaView = new MediaView(mediaPlayer);
-//        BorderPane borderPane = new BorderPane();
-//        borderPane.setCenter(mediaView);
-//        borderPane.setBottom(addToolBar());
-//        borderPane.setStyle("-fx-Background-color: Black");
-//        vBox.getChildren().add(borderPane);
         root.getChildren().add(vBox);
-        stage.setScene(new Scene(root, 500, 800));
+        stage.setScene(new Scene(root, 422, 600));
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        saveSongs();
+    }
+    
+    private void saveSongs() {
+        
+        String fileName = "../Docs/SongList.csv";
+        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(fileName))) {
+
+            for (Song s : songData) {
+                csvWriter.writeNext(s.getArray());
+            }
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("The file was not found.");
+            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            System.out.println("There was an IO exception.");
+            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void addSong(Stage stage) {

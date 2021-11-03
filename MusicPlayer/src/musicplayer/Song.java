@@ -33,4 +33,9 @@ public class Song {
         return title.get();
     }
     
+    public String[] getArray() {
+        String[] s = new String[]{getTitle(), getPath()};
+        return s;
+    }
+    
 }
