@@ -24,6 +24,10 @@ public class Song {
         title = new SimpleStringProperty(songTitle);
         filePath = source;
     }
+    public Song(String songTitle, String songPath) {
+        title = new SimpleStringProperty(songTitle);
+        filePath = songPath;
+    }
     
     public String getPath() {
         return filePath;

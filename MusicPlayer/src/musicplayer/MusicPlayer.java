@@ -1,11 +1,14 @@
 package musicplayer;
 
+import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvValidationException;
 import com.sun.javafx.embed.swing.FXDnD;
 import java.awt.Font;
 import java.awt.PageAttributes;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
@@ -62,8 +65,10 @@ public class MusicPlayer extends Application {
 
     @Override
     public void start(Stage stage) {
-
+        
         stage.setTitle("Awsome Music Player");
+        
+        loadSongs();
 
         Group root = new Group();
 
@@ -170,6 +175,36 @@ public class MusicPlayer extends Application {
             Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void loadSongs() {
+        try {
+            // declare instantiate reader.
+            // Set a FileReader to read from the file.
+            String fileName = "../Docs/SongList.csv";
+            try (CSVReader csvReader = new CSVReader(new FileReader(fileName))) {
+
+                String[] nextLine;
+
+                while ((nextLine = csvReader.readNext()) != null) {
+                    Song song = new Song(nextLine[0], nextLine[1]);
+                    mc.add(song);
+                }
+                updateList();
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("The File was not found.");
+            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, e);
+        } catch (IOException e) {
+            System.out.println("There was an error reading the file.");
+            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, e);
+        } catch (CsvValidationException ex) {
+            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            System.out.println("Program failed at somewhere.");
+            System.out.println(e.getMessage());
+        }
+    }
 
     private void addSong(Stage stage) {
         FileChooser fc = new FileChooser();
@@ -193,7 +228,7 @@ public class MusicPlayer extends Application {
         for (Song s : mc.songList) {
             songData.add(s);
         }
-        System.out.println(tableView.getItems().size());
+//        System.out.println(tableView.getItems().size());
     }
 
     private void highlightSong() {
@@ -216,5 +251,7 @@ public class MusicPlayer extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+    
 
 }

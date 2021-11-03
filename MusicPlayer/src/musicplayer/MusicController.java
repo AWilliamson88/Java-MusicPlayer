@@ -26,6 +26,10 @@ public class MusicController {
         songList.add(new Song(source));
         SortList();
     }
+    public void add(Song song) {
+        songList.add(song);
+        SortList();
+    }
 
     public LinkedList<Song> songList() {
         return songList;
