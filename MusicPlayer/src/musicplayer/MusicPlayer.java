@@ -3,18 +3,12 @@ package musicplayer;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
-import com.sun.javafx.embed.swing.FXDnD;
-import java.awt.Font;
-import java.awt.PageAttributes;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -22,27 +16,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
-import static javafx.scene.text.Font.font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
-
 
 /**
  * Java 3 AT 3 - Project Question 3 – Implement your solution - Must contain
@@ -65,9 +54,9 @@ public class MusicPlayer extends Application {
 
     @Override
     public void start(Stage stage) {
-        
+
         stage.setTitle("Awsome Music Player");
-        
+
         loadSongs();
 
         Group root = new Group();
@@ -99,33 +88,61 @@ public class MusicPlayer extends Application {
         // Table column
         TableColumn<Song, String> titleColumn = new TableColumn("Song Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        titleColumn.setPrefWidth(400);
 
         // Table View
         tableView.setPlaceholder(new Label("No songs to display"));
         tableView.setItems(songData);
         tableView.getColumns().add(titleColumn);
-        titleColumn.setPrefWidth(400);
+        
+        tableView.setRowFactory(tv -> {
+            TableRow<Song> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty()) ) {
+                    Song rowData = row.getItem();
+                    System.out.println("double click " + rowData.getTitle());
+                    popUpHash(rowData, stage);
+                }
+            });
+               return row;     
+        });
 
         // Music Player Buttons.
+        VBox btnsLeft = new VBox(5);
         Button btnPlayPause = new Button("Play / Pause");
+        btnPlayPause.setPrefHeight(30);
+        btnPlayPause.setPrefWidth(100);
         Button btnPrevious = new Button("Previous");
-        VBox btnsLeft = new VBox();
+        btnPrevious.setPrefHeight(30);
+        btnPrevious.setPrefWidth(100);
         btnsLeft.getChildren().addAll(btnPlayPause, btnPrevious);
 
         // Right buttons VBox
-        VBox btnsRight = new VBox();
+        VBox btnsRight = new VBox(5);
         Button btnStop = new Button("Stop");
+        btnStop.setPrefHeight(30);
+        btnStop.setPrefWidth(100);
         Button btnNext = new Button("Next");
+        btnNext.setPrefHeight(30);
+        btnNext.setPrefWidth(100);
         btnsRight.getChildren().addAll(btnStop, btnNext);
 
         // Button display HBox
-        HBox buttonDisplay = new HBox();
+        HBox buttonDisplay = new HBox(5);
         buttonDisplay.getChildren().addAll(btnsLeft, btnsRight);
+        buttonDisplay.setAlignment(Pos.BASELINE_CENTER);
 
+        HBox helpHBox = new HBox();
+        Button btnHelp = new Button("Help");
+        btnHelp.setPrefWidth(50);
+        helpHBox.setAlignment(Pos.BASELINE_RIGHT);
+        helpHBox.getChildren().add(btnHelp);
+        
         // Main UI display Vbox
         VBox vBox = new VBox();
+        VBox.setMargin(buttonDisplay, new Insets(10, 0, 2, 0));
         vBox.setPadding(new Insets(10, 20, 0, 10));
-        vBox.getChildren().addAll(topHBox, tableView, buttonDisplay);
+        vBox.getChildren().addAll(topHBox, tableView, buttonDisplay, helpHBox);
 
         // Music player button events
         btnPlayPause.setOnAction(e -> {
@@ -149,19 +166,37 @@ public class MusicPlayer extends Application {
         });
 
         root.getChildren().add(vBox);
-        stage.setScene(new Scene(root, 422, 600));
+        stage.setScene(new Scene(root, 422, 570));
         stage.show();
     }
+    
+    private void popUpHash(Song song, Stage stage) {
+        Label lbl = new Label("");
+        lbl.setMinWidth(300);
+        lbl.setMinHeight(400);
+        lbl.setStyle(" -fx-background-color: white;"
+                + " -fx-border-color: lightblue;");
+        
+        AnchorPane ap = new AnchorPane();
+        
+        Popup popHash = new Popup();
+        popHash.getContent().addAll(ap, lbl);
+        popHash.setAutoHide(true);
+        
+        popHash.show(stage);
+        
+    }
 
+    // Save the song list to a file when the application closes.
     @Override
     public void stop() {
         saveSongs();
     }
-    
+
     private void saveSongs() {
-        
+
         String fileName = "../Docs/SongList.csv";
-        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(fileName))) {
+        try ( CSVWriter csvWriter = new CSVWriter(new FileWriter(fileName))) {
 
             for (Song s : songData) {
                 csvWriter.writeNext(s.getArray());
@@ -175,13 +210,13 @@ public class MusicPlayer extends Application {
             Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void loadSongs() {
         try {
             // declare instantiate reader.
             // Set a FileReader to read from the file.
             String fileName = "../Docs/SongList.csv";
-            try (CSVReader csvReader = new CSVReader(new FileReader(fileName))) {
+            try ( CSVReader csvReader = new CSVReader(new FileReader(fileName))) {
 
                 String[] nextLine;
 
@@ -194,7 +229,8 @@ public class MusicPlayer extends Application {
 
         } catch (FileNotFoundException e) {
             System.out.println("The File was not found.");
-            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, e);
+            System.out.println(
+                    "When the program closes the song list will be saved to a new file.");
         } catch (IOException e) {
             System.out.println("There was an error reading the file.");
             Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, e);
@@ -251,7 +287,5 @@ public class MusicPlayer extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
-    
 
 }
