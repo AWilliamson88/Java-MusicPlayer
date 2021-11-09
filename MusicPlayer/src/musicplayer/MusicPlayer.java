@@ -132,12 +132,21 @@ public class MusicPlayer extends Application {
         buttonDisplay.getChildren().addAll(btnsLeft, btnsRight);
         buttonDisplay.setAlignment(Pos.BASELINE_CENTER);
 
+        // Help Button
         HBox helpHBox = new HBox();
         Button btnHelp = new Button("Help");
         btnHelp.setPrefWidth(50);
         helpHBox.setAlignment(Pos.BASELINE_RIGHT);
         helpHBox.getChildren().add(btnHelp);
-        
+        btnHelp.setOnAction(e -> {
+            System.out.println(stage.widthProperty().doubleValue());
+            if (stage.widthProperty().doubleValue() == 438) {
+                stage.setWidth(800);
+                
+            } else {
+                stage.setWidth(438);
+            }
+        });
         // Main UI display Vbox
         VBox vBox = new VBox();
         VBox.setMargin(buttonDisplay, new Insets(10, 0, 2, 0));
@@ -166,7 +175,7 @@ public class MusicPlayer extends Application {
         });
 
         root.getChildren().add(vBox);
-        stage.setScene(new Scene(root, 422, 570));
+        stage.setScene(new Scene(root, 422, 580));
         stage.show();
     }
     
