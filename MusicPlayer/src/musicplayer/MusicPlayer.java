@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -21,24 +22,27 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 /**
- * Java 3 AT 3 - Project Question 3 – Implement your solution - Must contain
- * dynamic data structures (e.g. doubly linked list or a binary tree) - Must
- * contain hashing techniques - Must contain sorting algorithm - Must contain
- * searching technique - Must contain 3rd party library - Must have a GUI - Must
- * adhere to coding standards - Must have help files
+ * Java 3 AT 3 - Project.
+ * Question 3 – Implement your solution.
+ * Must contain dynamic data structures.
+ * (e.g. doubly linked list or a binary tree).
+ * Must contain hashing techniques.
+ * Must contain sorting algorithm.
+ * Must contain searching technique.
+ * Must contain 3rd party library.
+ * Must have a GUI.
+ * Must adhere to coding standards.
+ * Must have help files.
  *
  * @author Andrew Williamson / P113357
  */
@@ -75,7 +79,7 @@ public class MusicPlayer extends Application {
         // Add a Song
         Button btnAdd = new Button("Add a Song");
         btnAdd.setPadding(new Insets(5, 10, 5, 10));
-        HBox.setMargin(btnAdd, new Insets(0, 0, 0, 70));
+        HBox.setMargin(btnAdd, new Insets(0, 0, 0, 756));
         // Add btn Event
         btnAdd.setOnAction(e -> addSong(stage));
 
@@ -88,24 +92,17 @@ public class MusicPlayer extends Application {
         // Table column
         TableColumn<Song, String> titleColumn = new TableColumn("Song Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        titleColumn.setPrefWidth(400);
+        titleColumn.setPrefWidth(220);
+
+        // Table column
+        TableColumn<Song, String> hashColumn = new TableColumn("Hash of Title");
+        hashColumn.setCellValueFactory(new PropertyValueFactory<>("hash"));
+        hashColumn.setPrefWidth(860);
 
         // Table View
         tableView.setPlaceholder(new Label("No songs to display"));
         tableView.setItems(songData);
-        tableView.getColumns().add(titleColumn);
-        
-        tableView.setRowFactory(tv -> {
-            TableRow<Song> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (!row.isEmpty()) ) {
-                    Song rowData = row.getItem();
-                    System.out.println("double click " + rowData.getTitle());
-                    popUpHash(rowData, stage);
-                }
-            });
-               return row;     
-        });
+        tableView.getColumns().addAll(titleColumn, hashColumn);
 
         // Music Player Buttons.
         VBox btnsLeft = new VBox(5);
@@ -130,23 +127,20 @@ public class MusicPlayer extends Application {
         // Button display HBox
         HBox buttonDisplay = new HBox(5);
         buttonDisplay.getChildren().addAll(btnsLeft, btnsRight);
-        buttonDisplay.setAlignment(Pos.BASELINE_CENTER);
+        buttonDisplay.setAlignment(Pos.CENTER);
 
         // Help Button
         HBox helpHBox = new HBox();
         Button btnHelp = new Button("Help");
-        btnHelp.setPrefWidth(50);
+        btnHelp.setPrefWidth(75);
         helpHBox.setAlignment(Pos.BASELINE_RIGHT);
         helpHBox.getChildren().add(btnHelp);
         btnHelp.setOnAction(e -> {
-            System.out.println(stage.widthProperty().doubleValue());
-            if (stage.widthProperty().doubleValue() == 438) {
-                stage.setWidth(800);
-                
-            } else {
-                stage.setWidth(438);
-            }
+            File file = new File("../Docs/AwesomeMusicPlayerHelpFile.pdf");
+            HostServices hostServices = getHostServices();
+            hostServices.showDocument(file.getAbsolutePath());
         });
+
         // Main UI display Vbox
         VBox vBox = new VBox();
         VBox.setMargin(buttonDisplay, new Insets(10, 0, 2, 0));
@@ -175,25 +169,8 @@ public class MusicPlayer extends Application {
         });
 
         root.getChildren().add(vBox);
-        stage.setScene(new Scene(root, 422, 580));
+        stage.setScene(new Scene(root, 1100, 570));
         stage.show();
-    }
-    
-    private void popUpHash(Song song, Stage stage) {
-        Label lbl = new Label("");
-        lbl.setMinWidth(300);
-        lbl.setMinHeight(400);
-        lbl.setStyle(" -fx-background-color: white;"
-                + " -fx-border-color: lightblue;");
-        
-        AnchorPane ap = new AnchorPane();
-        
-        Popup popHash = new Popup();
-        popHash.getContent().addAll(ap, lbl);
-        popHash.setAutoHide(true);
-        
-        popHash.show(stage);
-        
     }
 
     // Save the song list to a file when the application closes.
@@ -202,6 +179,8 @@ public class MusicPlayer extends Application {
         saveSongs();
     }
 
+    /// This method saves the songs to a csv file.
+    /// Called by the overridden stop method.
     private void saveSongs() {
 
         String fileName = "../Docs/SongList.csv";
@@ -220,8 +199,10 @@ public class MusicPlayer extends Application {
         }
     }
 
+    /// This method loads the song list if there is one into the music player.
     private void loadSongs() {
         try {
+            File temp;
             // declare instantiate reader.
             // Set a FileReader to read from the file.
             String fileName = "../Docs/SongList.csv";
@@ -230,27 +211,31 @@ public class MusicPlayer extends Application {
                 String[] nextLine;
 
                 while ((nextLine = csvReader.readNext()) != null) {
+
                     Song song = new Song(nextLine[0], nextLine[1]);
-                    mc.add(song);
+                    temp = new File(song.getPath());
+                    if (temp.exists()) {
+                        mc.add(song);
+                    }
                 }
                 updateList();
             }
 
         } catch (FileNotFoundException e) {
-            System.out.println("The File was not found.");
-            System.out.println(
-                    "When the program closes the song list will be saved to a new file.");
+//            System.out.println("The File was not found.");
+//            System.out.println(
+//                    "When the program closes the song list will be saved to a new file.");
         } catch (IOException e) {
-            System.out.println("There was an error reading the file.");
-            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, e);
+//            System.out.println("There was an error reading the file.");
+//            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, e);
         } catch (CsvValidationException ex) {
-            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception e) {
-            System.out.println("Program failed at somewhere.");
-            System.out.println(e.getMessage());
+
         }
     }
 
+    /// This method add's one or multiple songs into the song list.
     private void addSong(Stage stage) {
         FileChooser fc = new FileChooser();
         fc.setTitle("Add Song To Playlist");
@@ -268,6 +253,8 @@ public class MusicPlayer extends Application {
         }
     }
 
+    /// This method updates the observable list with all the songs from the
+    /// song list in the Music Controler.
     private void updateList() {
         songData.clear();
         for (Song s : mc.songList) {
@@ -276,23 +263,13 @@ public class MusicPlayer extends Application {
 //        System.out.println(tableView.getItems().size());
     }
 
+    /// This method highlights the currently playing song.
     private void highlightSong() {
         int index = songData.indexOf(mc.getCurrentSong());
         tableView.getSelectionModel().select(index);
 
     }
 
-//    private HBox addToolBar() {
-//        
-//        HBox toolBar = new HBox();
-//        toolBar.setPadding(new Insets(20));
-//        toolBar.setAlignment(Pos.CENTER);
-//        toolBar.alignmentProperty().isBound();
-//        toolBar.setSpacing(5);
-//        toolBar.setStyle("-fx-background-color: Black");
-//        
-//        return toolBar;
-//    }
     public static void main(String[] args) {
         launch(args);
     }

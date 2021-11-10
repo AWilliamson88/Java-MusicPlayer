@@ -6,11 +6,17 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 /**
- * Java 3 AT 3 - Project Question 3 – Implement your solution - Must contain
- * dynamic data structures (e.g. doubly linked list or a binary tree) - Must
- * contain hashing techniques - Must contain sorting algorithm - Must contain
- * searching technique - Must contain 3rd party library - Must have a GUI - Must
- * adhere to coding standards - Must have help files
+ * Java 3 AT 3 - Project.
+ * Question 3 – Implement your solution.
+ * Must contain dynamic data structures.
+ * (e.g. doubly linked list or a binary tree).
+ * Must contain hashing techniques.
+ * Must contain sorting algorithm.
+ * Must contain searching technique.
+ * Must contain 3rd party library.
+ * Must have a GUI.
+ * Must adhere to coding standards.
+ * Must have help files.
  *
  * @author Andrew Williamson / P113357
  */
@@ -26,6 +32,7 @@ public class MusicController {
         songList.add(new Song(source));
         SortList();
     }
+
     public void add(Song song) {
         songList.add(song);
         SortList();
@@ -35,6 +42,8 @@ public class MusicController {
         return songList;
     }
 
+    /// This method plays the song if it's not playing or pauses it if 
+    /// it is playing.
     public void play() {
 
         if (songList.size() > 0) {
@@ -43,7 +52,6 @@ public class MusicController {
                 currentSong = songList.getFirst();
                 media = new Media(currentSong.getPath());
                 mediaPlayer = new MediaPlayer(media);
-//            mediaPlayer.setAutoPlay(true);
                 mediaPlayer.play();
             } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
                 mediaPlayer.pause();
@@ -57,12 +65,15 @@ public class MusicController {
         }
     }
 
+    /// This method stops the music player from playing.
     public void stop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
     }
 
+    /// This method skips the current song and plays the next one in the list.
+    /// If the song is the last one in the list then the first song is played.
     public void next() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -80,6 +91,8 @@ public class MusicController {
         }
     }
 
+    /// This method skips back to the previous song in the list.
+    /// If the song is the first one in the list then the last song is played.
     public void previous() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -98,25 +111,23 @@ public class MusicController {
         }
     }
 
+    /// This method searches the song list for the song title in the search box
+    /// and plays it if it is found.
     public void search(ObservableList<Song> songData, String songToFind) {
         BinarySearch bs = new BinarySearch();
         int index = bs.search(songData, songToFind);
-        
+
         if (index >= 0) {
             currentSong = songList.get(index);
             media = new Media(currentSong.getPath());
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.play();
         }
-        
-        // If binary search returns -1 then -> partial search.
-        // implement partial matching
-        // implement comparable or whatever.
-        // check each match char by char
-        // any partial match goes on to a separate list
-        // partial matches are then displayed.
     }
 
+    /// This method creates the merge sorter object and uses it to sort 
+    /// the song list.
+    /// Called every time a song is added to the list.
     private void SortList() {
         MergeSorter ms = new MergeSorter();
         setSongList(ms.sort(getList()));
