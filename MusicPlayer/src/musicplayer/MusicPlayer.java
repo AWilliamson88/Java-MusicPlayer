@@ -90,12 +90,12 @@ public class MusicPlayer extends Application {
         topHBox.setPadding(new Insets(10, 10, 10, 10));
 
         // Table column
-        TableColumn<Song, String> titleColumn = new TableColumn("Song Title");
+        TableColumn<Song, String> titleColumn = new TableColumn<>("Song Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         titleColumn.setPrefWidth(220);
 
         // Table column
-        TableColumn<Song, String> hashColumn = new TableColumn("Hash of Title");
+        TableColumn<Song, String> hashColumn = new TableColumn<>("Hash of Title");
         hashColumn.setCellValueFactory(new PropertyValueFactory<>("hash"));
         hashColumn.setPrefWidth(860);
 
@@ -218,6 +218,7 @@ public class MusicPlayer extends Application {
                         mc.add(song);
                     }
                 }
+                mc.sortList(mc.getList());
                 updateList();
             }
 
@@ -249,6 +250,7 @@ public class MusicPlayer extends Application {
             for (File f : selectedFiles) {
                 mc.add(f.toURI().toString());
             }
+            mc.sortList(mc.getList());
             updateList();
         }
     }

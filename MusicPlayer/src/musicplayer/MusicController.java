@@ -2,8 +2,10 @@ package musicplayer;
 
 import java.util.LinkedList;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.stage.Popup;
 
 /**
  * Java 3 AT 3 - Project.
@@ -30,12 +32,12 @@ public class MusicController {
 
     public void add(String source) {
         songList.add(new Song(source));
-        SortList();
+//        SortList();
     }
 
     public void add(Song song) {
         songList.add(song);
-        SortList();
+//        SortList();
     }
 
     public LinkedList<Song> songList() {
@@ -122,15 +124,21 @@ public class MusicController {
             media = new Media(currentSong.getPath());
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.play();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Search Result");
+            alert.setHeaderText("Song not found.");
+            alert.setContentText("Please enter a different tittle and try again.");
+            alert.show();
         }
     }
 
     /// This method creates the merge sorter object and uses it to sort 
     /// the song list.
     /// Called every time a song is added to the list.
-    private void SortList() {
+    public void sortList(LinkedList<Song> songs) {
         MergeSorter ms = new MergeSorter();
-        setSongList(ms.sort(getList()));
+        setSongList(ms.sort(songs));
     }
 
     public Song getCurrentSong() {
