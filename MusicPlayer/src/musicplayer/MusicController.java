@@ -1,5 +1,6 @@
 package musicplayer;
 
+import java.net.URI;
 import java.util.LinkedList;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -30,7 +31,7 @@ public class MusicController {
     private Media media;
     private MediaPlayer mediaPlayer;
 
-    public void add(String source) {
+    public void add(URI source) {
         songList.add(new Song(source));
 //        SortList();
     }
@@ -48,22 +49,28 @@ public class MusicController {
     /// it is playing.
     public void play() {
 
-        if (songList.size() > 0) {
+        try {
 
-            if (mediaPlayer == null) {
-                currentSong = songList.getFirst();
-                media = new Media(currentSong.getPath());
-                mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.play();
-            } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
-                mediaPlayer.pause();
+            if (songList.size() > 0) {
+
+                if (mediaPlayer == null) {
+                    currentSong = songList.getFirst();
+                    URI songURI = new URI(currentSong.getPath());
+                    media = new Media(songURI.toString());
+                    mediaPlayer = new MediaPlayer(media);
+                    mediaPlayer.play();
+                } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                    mediaPlayer.pause();
+                } else {
+                    mediaPlayer.play();
+                }
             } else {
-                mediaPlayer.play();
+                // Create a message box to show an error.
+                // alternatively make the play button only clickable 
+                // When there is something to play.
             }
-        } else {
-            // Create a message box to show an error.
-            // alternatively make the play button only clickable 
-            // When there is something to play.
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 

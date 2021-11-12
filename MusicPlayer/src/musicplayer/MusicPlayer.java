@@ -8,6 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -202,19 +206,20 @@ public class MusicPlayer extends Application {
     /// This method loads the song list if there is one into the music player.
     private void loadSongs() {
         try {
-            File temp;
             // declare instantiate reader.
             // Set a FileReader to read from the file.
             String fileName = "../Docs/SongList.csv";
-            try ( CSVReader csvReader = new CSVReader(new FileReader(fileName))) {
+            try (CSVReader csvReader = new CSVReader(new FileReader(fileName))) {
 
                 String[] nextLine;
 
                 while ((nextLine = csvReader.readNext()) != null) {
 
-                    Song song = new Song(nextLine[0], nextLine[1]);
-                    temp = new File(song.getPath());
-                    if (temp.exists()) {
+                    URI songURI = URI.create(nextLine[1]);
+                    Song song = new Song(nextLine[0], songURI);
+
+                    File file = new File(songURI.getPath());
+                    if (file.exists()) {
                         mc.add(song);
                     }
                 }
@@ -223,16 +228,18 @@ public class MusicPlayer extends Application {
             }
 
         } catch (FileNotFoundException e) {
-//            System.out.println("The File was not found.");
+            System.out.println("The File was not found.");
 //            System.out.println(
 //                    "When the program closes the song list will be saved to a new file.");
         } catch (IOException e) {
-//            System.out.println("There was an error reading the file.");
+            System.out.println("There was an error reading the file.");
 //            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, e);
         } catch (CsvValidationException ex) {
+            System.out.println("Not a valid file.");
 //            Logger.getLogger(MusicPlayer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception e) {
-
+            System.out.println("There was an exception in the song loading method");
+            System.out.println(e.getMessage());
         }
     }
 
@@ -248,7 +255,7 @@ public class MusicPlayer extends Application {
 
         if (selectedFiles != null) {
             for (File f : selectedFiles) {
-                mc.add(f.toURI().toString());
+                mc.add(f.toURI());
             }
             mc.sortList(mc.getList());
             updateList();

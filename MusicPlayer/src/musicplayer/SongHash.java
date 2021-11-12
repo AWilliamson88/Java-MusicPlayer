@@ -4,24 +4,27 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
+ * Java 3 AT 3 - Project.
+ * Question 3 – Implement your solution.
+ * Must contain dynamic data structures.
+ * (e.g. doubly linked list or a binary tree).
+ * Must contain hashing techniques.
+ * Must contain sorting algorithm.
+ * Must contain searching technique.
+ * Must contain 3rd party library.
+ * Must have a GUI.
+ * Must adhere to coding standards.
+ * Must have help files.
  *
- * @author P113357
+ * @author Andrew Williamson / P113357
  */
 public class SongHash {
     
-
     public String getHash(String songTitle) {
         String songHash = "";
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
-            md.update(getSalt());
             byte[] bytes = md.digest(songTitle.getBytes());
             StringBuilder sb = new StringBuilder();
             
@@ -35,15 +38,6 @@ public class SongHash {
         }
         
         return songHash;
-    }
-    
-    private static byte[] getSalt() throws NoSuchAlgorithmException {
-
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-        byte[] salt = new byte[16];
-        sr.nextBytes(salt);
-
-        return salt;
     }
     
 }

@@ -1,5 +1,6 @@
 package musicplayer;
 
+import java.net.URI;
 import javafx.beans.property.SimpleStringProperty;
 
 /**
@@ -22,14 +23,15 @@ public class Song {
     String id;
     private final SimpleStringProperty title;
     private final SimpleStringProperty hash;
-    String filePath;
+    URI filePath;
     private static SongHash hasher = new SongHash();
 
     /// Constructor
-    public Song(String source) {
-        String songTitle
-                = source.substring(
-                        source.lastIndexOf('/') + 1, source.lastIndexOf('.'));
+    public Song(URI source) {
+//        System.out.println(source);
+        String sourceString = source.toString();
+        String songTitle = sourceString.substring(
+                        sourceString.lastIndexOf('/') + 1, sourceString.lastIndexOf('.'));
         songTitle = songTitle.replace("%20", " ");
         title = new SimpleStringProperty(songTitle);
         hash = new SimpleStringProperty(hasher.getHash(songTitle));
@@ -37,14 +39,16 @@ public class Song {
     }
 
     /// Constructor
-    public Song(String songTitle, String songPath) {
+    public Song(String songTitle, URI source) {
+//        System.out.println(source);
         title = new SimpleStringProperty(songTitle);
         hash = new SimpleStringProperty(hasher.getHash(songTitle));
-        filePath = songPath;
+        filePath = source;
     }
 
     public String getPath() {
-        return filePath;
+//        System.out.println(filePath);
+        return filePath.toString();
     }
 
     public String getTitle() {
