@@ -1,5 +1,5 @@
 # Awesome Music Player
-## _A simple music player written in Java_
+ __A simple music player written in Java__
 
 Made as part of a course to show understanding of certain course material & programming concepts.
 
