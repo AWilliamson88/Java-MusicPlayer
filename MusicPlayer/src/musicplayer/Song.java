@@ -60,7 +60,7 @@ public class Song {
         return s;
     }
 
-    public String getHash() {
+    public String getToolTip() {
         return hash.get();
     }
 
