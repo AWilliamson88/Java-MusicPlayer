@@ -1,8 +1,6 @@
 package musicplayer;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 /**
  * Java 3 AT 3 - Project.

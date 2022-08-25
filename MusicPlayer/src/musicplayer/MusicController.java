@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.stage.Popup;
 
 /**
  * Java 3 AT 3 - Project.
@@ -33,12 +32,10 @@ public class MusicController {
 
     public void add(URI source) {
         songList.add(new Song(source));
-//        SortList();
     }
 
     public void add(Song song) {
         songList.add(song);
-//        SortList();
     }
 
     public LinkedList<Song> songList() {
